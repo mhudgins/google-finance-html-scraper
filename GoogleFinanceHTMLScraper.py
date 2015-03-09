@@ -63,6 +63,8 @@ def GScrapeCashFlow(symbol):
   company = dict()
   GScrapeExchange(symbol,company)
   exchange = company["exh"]
+  if "exh" not in company:
+    return None
   
   company['symbol'] = symbol
   company['net_income'] = collections.OrderedDict()
@@ -90,7 +92,9 @@ def GScrapeCashFlow(symbol):
         if head in fields:
           for i in range(1,5):
             key = fields[head]
-            company[key][years[i]] = float(cells[i].find(text=True).strip().replace(",","").replace("-",""))
+            field = float(cells[i].find(text=True).strip().replace(",","").replace("-",""))
+            if field:
+              company[key][years[i]] = field 
   return company
 
 def GetSP500List():
