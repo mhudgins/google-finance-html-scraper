@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 # Lookup the exchange symbol is listed on and set the exchange in the companies dictionary
 
-def GScrapeExchange(symbol,d):
+def g_scrape_exchange(symbol,d):
   prefix = "http://www.google.com/finance?q="
   postfix = "&ei=HSzqVLKEI6nJiQLG44C4Bw"
   query = prefix + symbol + postfix
@@ -21,9 +21,9 @@ def GScrapeExchange(symbol,d):
   if match:
     d["exh"] = "NYSE"
 
-def GScrapeIncomeStatement(symbol):
+def g_scrape_income_statement(symbol):
   company = dict()
-  GScrapeExchange(symbol,company)
+  g_scrape_exchange(symbol,company)
   exchange = company["exh"]
   
   company['symbol'] = symbol
@@ -59,9 +59,9 @@ def GScrapeIncomeStatement(symbol):
             company[key][years[i]] = float(cells[i].find(text=True).strip().replace(",",""))
   return company
 
-def GScrapeCashFlow(symbol):
+def g_scrape_cash_flow(symbol):
   company = dict()
-  GScrapeExchange(symbol,company)
+  g_scrape_exchange(symbol,company)
   exchange = company["exh"]
   if "exh" not in company:
     return None
@@ -97,7 +97,7 @@ def GScrapeCashFlow(symbol):
               company[key][years[i]] = field 
   return company
 
-def GetSP500List():
+def get_sp_500_list():
   wiki = requests.get("http://en.wikipedia.org/wiki/List_of_S%26P_500_companies")
   soup = BeautifulSoup(wiki.text)
   table = soup.find("table", {"class" : "wikitable sortable"})
@@ -109,14 +109,14 @@ def GetSP500List():
   return sp_500
 
 if __name__ == "__main__":
-  csco_cash_flow = GScrapeCashFlow("csco")
+  csco_cash_flow = g_scrape_cash_flow("csco")
   print "===CSCO Net Income==="
   for k,v in csco_cash_flow["net_income"].items():
     print k,v
   print "===CSCO Dividends Paid==="
   for k,v in csco_cash_flow["div_paid"].items():
     print k,v
-  sp_500_idx = GetSP500List()
+  sp_500_idx = get_sp_500_list()
   print sp_500_idx[0:10]
   print len(sp_500_idx)
 
